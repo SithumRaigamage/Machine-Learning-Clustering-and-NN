@@ -63,3 +63,23 @@ print(boxplots)
 
 #Removing outliers
 cleaned_data <- scaled_data[-as.numeric(row.names(outliers)), ]
+
+#after removing outliers printing the data and visualizing
+
+# Visualize the cleaned data using boxplots
+cleaned_boxplot_data <- as.data.frame(cleaned_data)
+cleaned_boxplot_data_long <- pivot_longer(cleaned_boxplot_data, cols = everything(), 
+                                          names_to = "variable", values_to = "value")
+
+cleaned_boxplots <- ggplot(cleaned_boxplot_data_long, aes(x = variable, y = value)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Cleaned Data") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+print(cleaned_boxplots)
+
+# Print summary statistics of cleaned data
+summary(cleaned_data)
+
+# Print the first few rows of cleaned data
+head(cleaned_data)
