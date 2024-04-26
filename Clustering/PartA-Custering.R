@@ -5,7 +5,6 @@ library(ggplot2)
 library(tidyr)
 library(NbClust)
 library(factoextra)
-library(cluster)
 
 # Part a
 
@@ -175,5 +174,22 @@ WSS <- kmeans_result$tot.withinss
 Ratio_BSS_and_TSS <-BSS/TSS
 print(paste("Ratio of BSS/TSS :", Ratio_BSS_and_TSS))
 
+#Part D
+
+#loading the library cluster
+library(cluster)
+
+# Computing silhouette width for each observation
+sil_width <- silhouette(kmeans_result$cluster,dist(cleaned_data))
+
+#plot the silhouette plot
+plot(sil_width, col = 1:k)
+
+# Add average silhouette width to plot
+avg_sil_width <- mean(sil_width[, "sil_width"])
+abline(h = avg_sil_width, lty = 2)
+
+# Print average silhouette width score
+print(paste("Average Silhouette Width Score:", avg_sil_width))
 
 
