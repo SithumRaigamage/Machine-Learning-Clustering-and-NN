@@ -1,48 +1,35 @@
-#loading the required libraries
+# Loading the required libraries
 library(readxl)
 library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(NbClust)
 library(factoextra)
+library(cluster)
 
-#Part a
+# Part a
 
-#loading the dataset 
-wine_dataset<-read_excel("Git hub projects/MachineLearningAssignment/Clustering/Whitewine_v6.xlsx")
+# Loading the dataset 
+wine_dataset <- read_excel("Git hub projects/MachineLearningAssignment/Clustering/Whitewine_v6.xlsx")
 
-#exploring the dataset
+# Exploring the dataset
 head(wine_dataset)
 
-#exploring the structure of the dataset
+# Exploring the structure of the dataset
 str(wine_dataset)
 
-#explore the summary
+# Explore the summary
 summary(wine_dataset)
 
-#printing the data column wise
+# Printing the data column-wise
+for (i in 1:11) {
+  print(wine_dataset[, i])
+}
 
-# Print the first column
-print(wine_dataset$`fixed acidity`)
-# Print the second column
-print(wine_dataset$`volatile acidity`)
+# Performing the scaling of data
+scaled_data <- scale(wine_dataset[1:11])
 
-# Continue this for each column...
-print(wine_dataset$`citric acid`)
-print(wine_dataset$`residual sugar`)
-print(wine_dataset$chlorides)
-print(wine_dataset$`free sulfur dioxide`)
-print(wine_dataset$`total sulfur dioxide`)
-print(wine_dataset$density)
-print(wine_dataset$pH)
-print(wine_dataset$sulphates)
-print(wine_dataset$alcohol)
-print(wine_dataset$quality)
-
-#performing the scaling of data
-scaled_data<-scale(wine_dataset[1:11])
-
-#Detect outliers
+# Detect outliers
 # Reshaping the data from wide to long format
 boxplot_data <- as.data.frame(scaled_data)
 boxplot_data_long <- pivot_longer(boxplot_data, cols = everything(), 
@@ -64,11 +51,8 @@ boxplots <- ggplot(boxplot_data_long, aes(x = variable, y = value)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 print(boxplots)
 
-
-#Removing outliers
+# Removing outliers
 cleaned_data <- scaled_data[-as.numeric(row.names(outliers)), ]
-
-#after removing outliers printing the data and visualizing
 
 # Visualize the cleaned data using boxplots
 cleaned_boxplot_data <- as.data.frame(cleaned_data)
@@ -82,13 +66,23 @@ cleaned_boxplots <- ggplot(cleaned_boxplot_data_long, aes(x = variable, y = valu
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 print(cleaned_boxplots)
 
+# Visualize the distribution of cleaned data using density plots
+density_plots <- lapply(1:11, function(i) {
+  ggplot(cleaned_boxplot_data_long, aes(x = value)) +
+    geom_density(fill = "skyblue", color = "black") +
+    facet_wrap(~ variable, scales = "free") +
+    labs(title = paste("Density Plot of", names(cleaned_boxplot_data_long)[i])) +
+    theme_minimal()
+})
+print(density_plots)
+
 # Print summary statistics of cleaned data
 summary(cleaned_data)
 
 # Print the first few rows of cleaned data
 head(cleaned_data)
 
-#check the dimensions to ensure outliers were removed
+# Check the dimensions to ensure outliers were removed
 dim(cleaned_data)
 
 #Part b
