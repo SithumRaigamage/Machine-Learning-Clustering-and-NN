@@ -3,6 +3,10 @@ library(readxl)
 library(dplyr)
 library(ggplot2)
 library(tidyr)
+library(NbClust)
+library(factoextra)
+
+#Part a
 
 #loading the dataset 
 wine_dataset<-read_excel("Git hub projects/MachineLearningAssignment/Clustering/Whitewine_v6.xlsx")
@@ -83,3 +87,21 @@ summary(cleaned_data)
 
 # Print the first few rows of cleaned data
 head(cleaned_data)
+
+#check the dimensions to ensure outliers were removed
+dim(cleaned_data)
+
+#Part b
+
+#number of variables for dataset
+no_of_variables<-11 
+
+#method for clustering
+method<-"kmeans"
+
+#determine the number of clusters using NbClust library
+nb_clust_result<-NbClust(cleaned_data,distance="euclidean",min.nc = 2,max.nc = 10,method = method,index = "all")
+
+#printing the result
+print(nb_clust_result)
+
