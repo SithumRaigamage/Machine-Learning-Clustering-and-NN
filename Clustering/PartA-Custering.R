@@ -140,3 +140,40 @@ print(silhouette_scores)
 # Plot Silhouette method results
 plot(2:10, silhouette_scores, type = "b", pch = 19, xlab = "Number of clusters", ylab = "Silhouette Score")
 
+#NbCluster method -2
+#Elbow method -3
+#Gap statistics -4
+#Silhouette method -2
+
+#Part C
+
+#Assigning the K value based on the result above I got previously 
+#Assigning 2 since NbCluster and Silhouette returned 2
+k<-2
+
+#K means clustering
+kmeans_result <- kmeans(cleaned_data,centers = k)
+
+#printing kmeans result
+print(kmeans_result)
+
+#printing kmeans centers
+print(kmeans_result$centers)
+
+#printing clustered results
+clustered_data <-cbind(cleaned_data,Cluster=kmeans_result$cluster)
+print(clustered_data)
+
+#Calculating BSS
+BSS <- sum((apply(kmeans_result$centers,1, function(center) sum((center - colMeans(cleaned_data))^2))) * table(kmeans_result$cluster))
+#Calculating TSS
+TSS <- sum(apply(cleaned_data, 2, function(feature) sum((feature - mean(feature))^2)))
+#Calculating WSS
+WSS <- kmeans_result$tot.withinss
+
+#Calculate the ratio of BSS and TSS
+Ratio_BSS_and_TSS <-BSS/TSS
+print(paste("Ratio of BSS/TSS :", Ratio_BSS_and_TSS))
+
+
+
