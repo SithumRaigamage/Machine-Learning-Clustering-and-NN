@@ -102,6 +102,7 @@ wss <- numeric(10)
 for (i in 1:10) {
   wss[i] <- sum(kmeans(cleaned_data, centers = i)$withinss)
 }
+#assigning the dataframe
 elbow_data <- data.frame(Clusters = 1:10, WSS = wss)
 
 # Plotting the Elbow method results
@@ -111,6 +112,8 @@ elbow_plot <- ggplot(elbow_data, aes(x = Clusters, y = WSS)) +
   labs(x = "Number of clusters", y = "Within-cluster sum of squares (WSS)", 
        title = "Elbow Method for Optimal K") +
   theme_minimal()
+
+#printing the elbow plot
 print(elbow_plot)
 #Clustering k is 3
 
@@ -129,8 +132,11 @@ silhouette_scores <- sapply(2:10, function(k) {
   kmeans_result <- kmeans(cleaned_data, centers = k)
   mean(silhouette(kmeans_result$cluster, dist(cleaned_data)))
 })
+
 #print the Silhouette data
 print(silhouette_scores)
 #no of clusters 2
+
 # Plot Silhouette method results
 plot(2:10, silhouette_scores, type = "b", pch = 19, xlab = "Number of clusters", ylab = "Silhouette Score")
+
