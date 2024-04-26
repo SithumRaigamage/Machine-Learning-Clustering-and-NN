@@ -105,3 +105,8 @@ nb_clust_result<-NbClust(cleaned_data,distance="euclidean",min.nc = 2,max.nc = 1
 #printing the result
 print(nb_clust_result)
 
+# Determine the number of clusters using the Elbow method
+elbow_method <- fviz_nbclust(cleaned_data, kmeans, method = "wss")
+
+# Print the Elbow method plot
+print(elbow_method)
