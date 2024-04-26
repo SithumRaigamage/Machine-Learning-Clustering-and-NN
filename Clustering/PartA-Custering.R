@@ -92,9 +92,7 @@ method <- "kmeans"
 
 # Determine the number of clusters using NbClust library
 nbclust_result <- NbClust(cleaned_data, distance = "euclidean", min.nc = 2, max.nc = 10, method = method, index = "all")
-
-# Extract the suggested number of clusters (k) from NbClust results
-nbclust_k <- nbclust_result$Best.nc[1]
+#number of clusters-k=2
 
 # Print the result
 print(nbclust_result)
@@ -114,16 +112,14 @@ elbow_plot <- ggplot(elbow_data, aes(x = Clusters, y = WSS)) +
        title = "Elbow Method for Optimal K") +
   theme_minimal()
 print(elbow_plot)
-
-# Extract the suggested number of clusters (k) from the Elbow method
-elbow_k <- elbow_data$Clusters[which.min(wss)]
-
+#Clustering k is 3
 
 # Determining the number of clusters using Gap statistics
 gap_statistic <- clusGap(cleaned_data, FUN = kmeans, nstart = 25, K.max = 10, B = 50)
+#number of cluster =4
 
-# Extract the suggested number of clusters (k) from Gap statistics
-gap_k <- which.max(gap_statistic$Tab[, "gap"])
+# Plot the Gap statistics
+fviz_gap_stat(gap_statistic)
 
 # Print the Gap statistics plot
 print(gap_statistic)
@@ -133,16 +129,8 @@ silhouette_scores <- sapply(2:10, function(k) {
   kmeans_result <- kmeans(cleaned_data, centers = k)
   mean(silhouette(kmeans_result$cluster, dist(cleaned_data)))
 })
-
-# Extract the suggested number of clusters (k) from Silhouette method
-silhouette_k <- which.max(silhouette_scores) + 1
-
+#print the Silhouette data
+print(silhouette_scores)
+#no of clusters 2
 # Plot Silhouette method results
 plot(2:10, silhouette_scores, type = "b", pch = 19, xlab = "Number of clusters", ylab = "Silhouette Score")
-abline(v = silhouette_k, col = "red")
-
-# Print the number of clusters suggested by each method
-cat("NbClust suggested", nbclust_k, "clusters.\n")
-cat("Elbow method suggested", elbow_k, "clusters.\n")
-cat("Gap statistics suggested", gap_k, "clusters.\n")
-cat("Silhouette method suggested", silhouette_k, "clusters.\n")
