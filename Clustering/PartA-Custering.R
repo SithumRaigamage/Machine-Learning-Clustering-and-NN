@@ -93,14 +93,35 @@ no_of_variables<-11
 #method for clustering
 method<-"kmeans"
 
-#determine the number of clusters using NbClust library
+#determining the number of clusters using NbClust library
 nb_clust_result<-NbClust(cleaned_data,distance="euclidean",min.nc = 2,max.nc = 10,method = method,index = "all")
 
 #printing the result
 print(nb_clust_result)
 
-# Determine the number of clusters using the Elbow method
+# Determining the number of clusters using the Elbow method
 elbow_method <- fviz_nbclust(cleaned_data, kmeans, method = "wss")
 
 # Print the Elbow method plot
 print(elbow_method)
+
+# Determining the number of clusters using Gap statistics
+gap_statistic <- clusGap(cleaned_data, FUN = kmeans, nstart = 25, K.max = 10, B = 50)
+
+# Print the Gap statistics plot
+print(gap_statistic)
+
+# Initialize an empty vector to store silhouette scores
+silhouette_scores <- c()
+
+# Loop through different numbers of clusters
+for (k in 2:10) {
+  # Perform k-means clustering
+  kmeans_result <- kmeans(cleaned_data, centers = k)
+  
+  # Calculate silhouette score
+  silhouette_scores[k - 1] <- silhouette(kmeans_result$cluster, dist(cleaned_data))$avg.width
+}
+
+# Plot silhouette scores
+plot(2:10, silhouette_scores, type = "b", pch = 19, xlab = "Number of clusters", ylab = "Silhouette Score")
