@@ -6,6 +6,8 @@ library(tidyr)
 library(NbClust)
 library(factoextra)
 
+#1st SubTask Objectives
+
 # Part a
 
 # Loading the dataset 
@@ -114,8 +116,9 @@ elbow_plot <- ggplot(elbow_data, aes(x = Clusters, y = WSS)) +
 
 #printing the elbow plot
 print(elbow_plot)
-#Clustering k is 3
+#Clustering k is 2 close to 2
 
+library(cluster)
 # Determining the number of clusters using Gap statistics
 gap_statistic <- clusGap(cleaned_data, FUN = kmeans, nstart = 25, K.max = 10, B = 50)
 #number of cluster =4
@@ -183,7 +186,7 @@ library(cluster)
 sil_width <- silhouette(kmeans_result$cluster,dist(cleaned_data))
 
 #plot the silhouette plot
-plot(sil_width, col = 1:k)
+plot(sil_width, main="Silhouette plot for K-means Clustering")
 
 # Add average silhouette width to plot
 avg_sil_width <- mean(sil_width[, "sil_width"])
