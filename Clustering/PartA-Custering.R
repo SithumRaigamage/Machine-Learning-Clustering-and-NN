@@ -195,4 +195,36 @@ abline(h = avg_sil_width, lty = 2)
 # Print average silhouette width score
 print(paste("Average Silhouette Width Score:", avg_sil_width))
 
+#2nd Sub Objective
+
+#Part e
+
+#Performing PCA analysis using prcomp
+pca_result <-prcomp(cleaned_data, center = TRUE, scale. = TRUE)
+
+#printing the pca analysis result
+print(pca_result)
+
+#printing the explained variance ratio eigenvalues and eigenvectors
+summary(pca_result)
+
+# Cumulative proportion of variance explained
+cumulative_variance <- cumsum(pca_result$sdev^2 / sum(pca_result$sdev^2))
+print(cumulative_variance)
+
+#plot the cumulative proportion of variance explained
+plot(cumulative_variance, type = "b", xlab = "Number of Principal Components", ylab = "Cumulative Proportion of Variance Explained", main = "Cumulative Proportion of Variance Explained by Principal Components")
+
+# Choosing  the number of principal components that provide at least or more than cumulative score > 85%
+selected_components <- which(cumulative_variance > 0.85)[1]
+
+#printing the no of selected components
+print(selected_components)
+
+#transforming the original data with attributes
+tranformed_data <-as.data.frame(predict(pca_result, newdata = cleaned_data)[, 1:selected_components])
+
+#printing the tranformed_data
+print(head(tranformed_data))
+
 
