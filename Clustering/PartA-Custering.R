@@ -200,9 +200,7 @@ library(cluster)
 
 # Computing silhouette width for each observation
 sil_width <- silhouette(kmeans_result$cluster,dist(cleaned_data))
-
-#plot the silhouette plot
-plot(sil_width, main="Silhouette plot for K-means Clustering")
+fviz_silhouette(sil_width)
 
 # Add average silhouette width to plot
 avg_sil_width <- mean(sil_width[, "sil_width"])
@@ -343,9 +341,7 @@ ggplot(clustered_data_pca, aes(x = transformed_data_df[,1], y = transformed_data
 #Part H
 # Computing silhouette width for each observation
 sil_width_pca <- silhouette(kmeans_result_pca$cluster, dist(transformed_data))
-
-# Plot silhouette plot
-plot(sil_width_pca)
+fviz_silhouette(sil_width_pca)
 
 # Add average silhouette width to plot
 avg_sil_width_pca <- mean(sil_width_pca[, "sil_width"])
