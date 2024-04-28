@@ -236,7 +236,7 @@ print(head(transformed_data))
 # Determine the number of clusters using NbClust library on PCA-based dataset
 nbclust_result_pca <- NbClust(transformed_data, distance = "euclidean", min.nc = 2, max.nc = 10, method = "kmeans", index = "all")
 print(nbclust_result_pca)
-# k is 2
+# k is 3
 
 # Determine the number of clusters using the Elbow method on PCA-based dataset
 wss_pca <- numeric(10)
@@ -251,13 +251,13 @@ elbow_plot_pca <- ggplot(elbow_data_pca, aes(x = Clusters, y = WSS)) +
        title = "Elbow Method for Optimal K (PCA-based dataset)") +
   theme_minimal()
 print(elbow_plot_pca)
-# k is 2
+# k is 3
 
 # Determine the number of clusters using Gap statistics on PCA-based dataset
 gap_statistic_pca <- clusGap(transformed_data, FUN = kmeans, nstart = 25, K.max = 10, B = 50)
 print(gap_statistic_pca)
 fviz_gap_stat(gap_statistic_pca)
-#k is 3
+#k is 1
 
 # Determine the number of clusters using the Silhouette method on PCA-based dataset
 silhouette_scores_pca <- sapply(2:10, function(k) {
@@ -266,12 +266,12 @@ silhouette_scores_pca <- sapply(2:10, function(k) {
 })
 print(silhouette_scores_pca)
 plot(2:10, silhouette_scores_pca, type = "b", pch = 19, xlab = "Number of clusters", ylab = "Silhouette Score (PCA-based dataset)")
-#k is 9
+#k is 10
 
-#NBcluster k - 2
-#Elbow method  k - 2
-#Gap statistics k - 3
-#Silhouette k - 9
+#NBcluster k - 3
+#Elbow method  k - 3
+#Gap statistics k - 1
+#Silhouette k - 10
 
 #Part G
 
