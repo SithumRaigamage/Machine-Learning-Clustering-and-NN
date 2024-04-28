@@ -350,4 +350,5 @@ abline(h = avg_sil_width_pca, lty = 2)
 # Print average silhouette width score
 print(paste("Average Silhouette Width Score:", avg_sil_width_pca))
 
+#
 
