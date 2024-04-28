@@ -286,3 +286,4 @@ plot(2:10, silhouette_scores_pca, type = "b", pch = 19, xlab = "Number of cluste
 #Elbow method  k - 2
 #Gap statistics k - 3
 #Silhouette k - 9
+
