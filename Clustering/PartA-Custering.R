@@ -229,4 +229,35 @@ tranformed_data <-as.data.frame(predict(pca_result, newdata = cleaned_data)[, 1:
 #printing the tranformed_data
 print(head(tranformed_data))
 
+# Part e
+
+# Apply PCA to the cleaned data
+pca_result <- prcomp(cleaned_data, scale. = TRUE)
+
+# Print PCA result
+print(pca_result)
+
+# Explained variance ratio
+summary(pca_result)
+
+# Cumulative proportion of variance explained
+cumulative_variance <- cumsum(pca_result$sdev^2 / sum(pca_result$sdev^2))
+print(cumulative_variance)
+
+# Plot cumulative proportion of variance explained
+plot(cumulative_variance, type = "b", xlab = "Number of Principal Components", ylab = "Cumulative Proportion of Variance Explained", main = "Cumulative Proportion of Variance Explained by Principal Components")
+
+# Choose the number of principal components that provide at least cumulative score > 85%
+selected_components <- which(cumulative_variance > 0.85)[1]
+
+# Print the number of selected principal components
+print(paste("Number of Principal Components Selected:", selected_components))
+
+# Transform the original data using selected principal components
+transformed_data <- as.data.frame(predict(pca_result, newdata = cleaned_data)[, 1:selected_components])
+
+# Print the first few rows of the transformed dataset
+print(head(transformed_data))
+
+
 
