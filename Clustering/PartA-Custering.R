@@ -121,13 +121,14 @@ print(elbow_plot)
 library(cluster)
 # Determining the number of clusters using Gap statistics
 gap_statistic <- clusGap(cleaned_data, FUN = kmeans, nstart = 25, K.max = 10, B = 50)
-#number of cluster =4
 
 # Plot the Gap statistics
 fviz_gap_stat(gap_statistic)
 
 # Print the Gap statistics plot
 print(gap_statistic)
+#number of cluster =4
+
 
 # Determine the number of clusters using the Silhouette method
 silhouette_scores <- sapply(2:10, function(k) {
@@ -137,20 +138,21 @@ silhouette_scores <- sapply(2:10, function(k) {
 
 #print the Silhouette data
 print(silhouette_scores)
-#no of clusters 2
+
 
 # Plot Silhouette method results
 plot(2:10, silhouette_scores, type = "b", pch = 19, xlab = "Number of clusters", ylab = "Silhouette Score")
+#no of clusters 9
 
 #NbCluster method -2
-#Elbow method -3
+#Elbow method -2 (K value taken based on elbow in plot)
 #Gap statistics -4
-#Silhouette method -2
+#Silhouette method -9 (K value taken on highest peak on the plot)
 
 #Part C
 
 #Assigning the K value based on the result above I got previously 
-#Assigning 2 since NbCluster and Silhouette returned 2
+#Assigning 2 since NbCluster and Elbow returned 2
 k<-2
 
 #K means clustering
