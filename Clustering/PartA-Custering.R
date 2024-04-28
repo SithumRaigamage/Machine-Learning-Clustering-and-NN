@@ -5,6 +5,9 @@ library(ggplot2)
 library(tidyr)
 library(NbClust)
 library(factoextra)
+library(clusterCrit)
+
+library(cluster)
 
 #1st SubTask Objectives
 
@@ -350,5 +353,14 @@ abline(h = avg_sil_width_pca, lty = 2)
 # Print average silhouette width score
 print(paste("Average Silhouette Width Score:", avg_sil_width_pca))
 
-#
+#Part I
+library(fpc)
+library(cluster)
+# Compute the Calinski-Harabasz Index
+calinski_harabasz <- round(calinhara(transformed_data, kmeans_result_pca$cluster), digits = 2)
 
+# Print the Calinski-Harabasz Index
+print(paste("Calinski-Harabasz Index:", calinski_harabasz))
+
+# Plotting the clusters with centroids
+fviz_cluster(kmeans_result_pca, data = transformed_data, geom = "point", stand = FALSE, main = "Clusters with Centroids")
