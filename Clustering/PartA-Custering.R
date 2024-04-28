@@ -224,40 +224,51 @@ selected_components <- which(cumulative_variance > 0.85)[1]
 print(selected_components)
 
 #transforming the original data with attributes
-tranformed_data <-as.data.frame(predict(pca_result, newdata = cleaned_data)[, 1:selected_components])
+transformed_data <-as.data.frame(predict(pca_result, newdata = cleaned_data)[, 1:selected_components])
 
 #printing the tranformed_data
-print(head(tranformed_data))
-
-# Part e
-
-# Apply PCA to the cleaned data
-pca_result <- prcomp(cleaned_data, scale. = TRUE)
-
-# Print PCA result
-print(pca_result)
-
-# Explained variance ratio
-summary(pca_result)
-
-# Cumulative proportion of variance explained
-cumulative_variance <- cumsum(pca_result$sdev^2 / sum(pca_result$sdev^2))
-print(cumulative_variance)
-
-# Plot cumulative proportion of variance explained
-plot(cumulative_variance, type = "b", xlab = "Number of Principal Components", ylab = "Cumulative Proportion of Variance Explained", main = "Cumulative Proportion of Variance Explained by Principal Components")
-
-# Choose the number of principal components that provide at least cumulative score > 85%
-selected_components <- which(cumulative_variance > 0.85)[1]
-
-# Print the number of selected principal components
-print(paste("Number of Principal Components Selected:", selected_components))
-
-# Transform the original data using selected principal components
-transformed_data <- as.data.frame(predict(pca_result, newdata = cleaned_data)[, 1:selected_components])
-
-# Print the first few rows of the transformed dataset
 print(head(transformed_data))
 
+#part F
 
+#doing automated tools for the new dataset(transformed_data)
 
+# Determine the number of clusters using NbClust library on PCA-based dataset
+nbclust_result_pca <- NbClust(transformed_data, distance = "euclidean", min.nc = 2, max.nc = 10, method = "kmeans", index = "all")
+print(nbclust_result_pca)
+# k is 2
+
+# Determine the number of clusters using the Elbow method on PCA-based dataset
+wss_pca <- numeric(10)
+for (i in 1:10) {
+  wss_pca[i] <- sum(kmeans(transformed_data, centers = i)$withinss)
+}
+elbow_data_pca <- data.frame(Clusters = 1:10, WSS = wss_pca)
+elbow_plot_pca <- ggplot(elbow_data_pca, aes(x = Clusters, y = WSS)) +
+  geom_line() +
+  geom_point() +
+  labs(x = "Number of clusters", y = "Within-cluster sum of squares (WSS)", 
+       title = "Elbow Method for Optimal K (PCA-based dataset)") +
+  theme_minimal()
+print(elbow_plot_pca)
+# k is 2
+
+# Determine the number of clusters using Gap statistics on PCA-based dataset
+gap_statistic_pca <- clusGap(transformed_data, FUN = kmeans, nstart = 25, K.max = 10, B = 50)
+print(gap_statistic_pca)
+fviz_gap_stat(gap_statistic_pca)
+#k is 3
+
+# Determine the number of clusters using the Silhouette method on PCA-based dataset
+silhouette_scores_pca <- sapply(2:10, function(k) {
+  kmeans_result_pca <- kmeans(transformed_data, centers = k)
+  mean(silhouette(kmeans_result_pca$cluster, dist(transformed_data)))
+})
+print(silhouette_scores_pca)
+plot(2:10, silhouette_scores_pca, type = "b", pch = 19, xlab = "Number of clusters", ylab = "Silhouette Score (PCA-based dataset)")
+#k is 9
+
+#NBcluster k - 2
+#Elbow method  k - 2
+#Gap statistics k - 3
+#Silhouette k - 9
