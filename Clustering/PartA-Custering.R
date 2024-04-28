@@ -179,6 +179,20 @@ WSS <- kmeans_result$tot.withinss
 Ratio_BSS_and_TSS <-BSS/TSS
 print(paste("Ratio of BSS/TSS :", Ratio_BSS_and_TSS))
 
+# Convert cleaned_data to a data frame
+cleaned_data_df <- as.data.frame(cleaned_data)
+
+# Adding cluster assignment to the original dataset
+clustered_dataset <- cbind(cleaned_data_df, Cluster = factor(cluster_assignment))
+
+# Plotting the data points with color-coded clusters
+ggplot(clustered_dataset, aes(x = cleaned_data_df[,1], y = cleaned_data_df[,2], color = Cluster)) +
+  geom_point() +
+  labs(title = "Data Points after K-means Clustering (2 Clusters)",
+       x = "Principal Component 1",
+       y = "Principal Component 2") +
+  theme_minimal()
+
 #Part D
 
 #loading the library cluster
