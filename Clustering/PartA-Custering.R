@@ -179,20 +179,6 @@ WSS <- kmeans_result$tot.withinss
 Ratio_BSS_and_TSS <-BSS/TSS
 print(paste("Ratio of BSS/TSS :", Ratio_BSS_and_TSS))
 
-# Convert cleaned_data to a data frame
-cleaned_data_df <- as.data.frame(cleaned_data)
-
-# Adding cluster assignment to the original dataset
-clustered_dataset <- cbind(cleaned_data_df, Cluster = factor(cluster_assignment))
-
-# Plotting the data points with color-coded clusters
-ggplot(clustered_dataset, aes(x = cleaned_data_df[,1], y = cleaned_data_df[,2], color = Cluster)) +
-  geom_point() +
-  labs(title = "Data Points after K-means Clustering (2 Clusters)",
-       x = "Principal Component 1",
-       y = "Principal Component 2") +
-  theme_minimal()
-
 #Part D
 
 #loading the library cluster
@@ -286,4 +272,43 @@ plot(2:10, silhouette_scores_pca, type = "b", pch = 19, xlab = "Number of cluste
 #Elbow method  k - 2
 #Gap statistics k - 3
 #Silhouette k - 9
+
+#Part G
+
+#Assigning the K value based on the result above I got previously for transformed_data
+#Assigning 2 since NbCluster and Elbow returned 2
+optimal_k<-2
+
+# Perform k-means clustering with the optimal value of k
+kmeans_result_pca <- kmeans(transformed_data, centers = optimal_k)
+
+# Print k-means result
+print(kmeans_result_pca)
+
+# Print cluster centers
+print(kmeans_result_pca$centers)
+
+# Add cluster assignment to the transformed data
+clustered_data_pca <- cbind(transformed_data, Cluster = kmeans_result_pca$cluster)
+
+# Print clustered results
+print(clustered_data_pca)
+
+# Calculating BSS (Between-Cluster Sums of Squares)
+BSS_pca <- sum((apply(kmeans_result_pca$centers, 1, function(center) sum((center - colMeans(transformed_data))^2))) * table(kmeans_result_pca$cluster))
+
+# Calculating TSS (Total Sum of Squares)
+TSS_pca <- sum(apply(transformed_data, 2, function(feature) sum((feature - mean(feature))^2)))
+
+# Calculating WSS (Within-Cluster Sums of Squares)
+WSS_pca <- kmeans_result_pca$tot.withinss
+
+# Calculating the ratio of BSS and TSS
+Ratio_BSS_and_TSS_pca <- BSS_pca / TSS_pca
+
+# Printing the ratio of BSS and TSS
+print(paste("Ratio of BSS/TSS:", Ratio_BSS_and_TSS_pca))
+
+# Printing the within-cluster sums of squares (WSS) index
+print(paste("Within-cluster Sums of Squares (WSS):", WSS_pca))
 
