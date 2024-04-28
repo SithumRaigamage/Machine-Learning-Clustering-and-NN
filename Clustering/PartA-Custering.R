@@ -218,13 +218,13 @@ print(cumulative_variance)
 plot(cumulative_variance, type = "b", xlab = "Number of Principal Components", ylab = "Cumulative Proportion of Variance Explained", main = "Cumulative Proportion of Variance Explained by Principal Components")
 
 # Choosing  the number of principal components that provide at least or more than cumulative score > 85%
-selected_components <- which(cumulative_variance > 0.85)[1]
+selected_components <- which(cumulative_variance > 0.85)
 
 #printing the no of selected components
 print(selected_components)
 
 #transforming the original data with attributes
-transformed_data <-as.data.frame(predict(pca_result, newdata = cleaned_data)[, 1:selected_components])
+transformed_data <-as.data.frame(predict(pca_result, newdata = cleaned_data)[, selected_components])
 
 #printing the tranformed_data
 print(head(transformed_data))
