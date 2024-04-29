@@ -30,20 +30,6 @@ for (delay in 1:max_delay) {
   output_matrices[[delay]] <- output
 }
 
-
-#accessing input/output matrices for delay = 1
-input_matrices[[1]]
-output_matrices[[1]]
-#accessing input/output matrices for delay = 2
-input_matrices[[2]]
-output_matrices[[2]]
-#accessing input/output matrices for delay = 3
-input_matrices[[3]]
-output_matrices[[3]]
-#accessing input/output matrices for delay = 4
-input_matrices[[4]]
-output_matrices[[4]]
-
 #Part C
 
 # Define a function to normalize data
@@ -56,38 +42,6 @@ normalize <- function(data) {
 for (delay in 1:max_delay) {
   input_matrices[[delay]] <- normalize(input_matrices[[delay]])
 }
-
-# Print normalized input/output matrices for delay = 1
-cat("Normalized input matrix for delay = 1:\n")
-print(input_matrices[[1]])
-cat("\n")
-cat("Output matrix for delay = 1:\n")
-print(output_matrices[[1]])
-cat("\n")
-
-# Print normalized input/output matrices for delay = 2
-cat("Normalized input matrix for delay = 2:\n")
-print(input_matrices[[2]])
-cat("\n")
-cat("Output matrix for delay = 2:\n")
-print(output_matrices[[2]])
-cat("\n")
-
-# Print normalized input/output matrices for delay = 3
-cat("Normalized input matrix for delay = 3:\n")
-print(input_matrices[[3]])
-cat("\n")
-cat("Output matrix for delay = 3:\n")
-print(output_matrices[[3]])
-cat("\n")
-
-# Print normalized input/output matrices for delay = 4
-cat("Normalized input matrix for delay = 4:\n")
-print(input_matrices[[4]])
-cat("\n")
-cat("Output matrix for delay = 4:\n")
-print(output_matrices[[4]])
-cat("\n")
 
 # Define a function to denormalize data
 denormalize <- function(normalized_data, original_data) {
@@ -113,6 +67,7 @@ for (delay in 1:max_delay) {
 }
 
 #Part D
+
 
 
 
