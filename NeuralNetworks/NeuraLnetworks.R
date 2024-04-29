@@ -59,12 +59,15 @@ denormalized_input_matrices <- lapply(input_matrices, function(x) {
 #Part D
 
 # Define a function to create and train MLP models with activation functions
-train_mlp_with_activation <- function(input_data, output_data, hidden_layers, activation_function, linear_output = TRUE) {
+train_mlp_with_activation <- function(input_data, output_data, hidden_layers, nodes, activation_function, linear_output = TRUE) {
   # Combine input and output data
   combined_data <- cbind(input_data, output_data)
   
+  # Create formula for neuralnet
+  formula <- as.formula(paste("output_data ~", paste(colnames(input_data), collapse = " + ")))
+  
   # Create and train the MLP model with specified activation function
-  mlp_model <- neuralnet(output_data ~ ., hidden = hidden_layers, 
+  mlp_model <- neuralnet(formula, hidden = c(nodes), 
                          linear.output = linear_output, act.fct = activation_function, data = combined_data)
   
   # Return the trained model
@@ -89,11 +92,13 @@ evaluate_mlp <- function(model, test_input, test_output) {
   cat("sMAPE:", smape, "%\n")
 }
 
+
 # Define the input and output data for training and testing
-train_input <- denormalized_input_matrices[[4]]  # Change the delay as needed
-train_output <- output_matrices[[4]]  # Change the delay as needed
+train_input <- denormalized_input_matrices[[2]]  # Change the delay as needed
+train_output <- output_matrices[[2]]  # Change the delay as needed
 
 test_delay <- 4  # Change the delay as needed
+
 test_input <- data.frame(matrix(NA, nrow = length(test_data) - test_delay, ncol = test_delay))
 for (i in 1:test_delay) {
   test_input[, i] <- lag(test_data, i)[test_delay:(length(test_data) - 1)]
@@ -101,16 +106,14 @@ for (i in 1:test_delay) {
 test_output <- test_data[(test_delay + 1):length(test_data)]
 
 # Train and evaluate MLP models with different configurations including activation functions
-mlp_model_3 <- train_mlp_with_activation(train_input, train_output, hidden_layers = 5, 
+mlp_model_1 <- train_mlp_with_activation(train_input, train_output, hidden_layers = 1, nodes = c(12),
                                          activation_function = "logistic", linear_output = TRUE)
-cat("MLP Model 3 (Linear Output, Logistic Activation):\n")
-evaluate_mlp(mlp_model_3, test_input, test_output)
-# Plot the MLP models with activation functions
-plot(mlp_model_3) 
+cat("MLP Model 1 (Linear Output, Logistic Activation):\n")
+evaluate_mlp(mlp_model_1, test_input, test_output)
+plot(mlp_model_1)  # MLP Model 1
 
-mlp_model_4 <- train_mlp_with_activation(train_input, train_output, hidden_layers = 12, 
+mlp_model_2 <- train_mlp_with_activation(train_input, train_output, hidden_layers = 2, nodes = c(12,3),
                                          activation_function = "tanh", linear_output = FALSE)
-cat("\nMLP Model 4 (Nonlinear Output, Hyperbolic Tangent Activation):\n")
-evaluate_mlp(mlp_model_4, test_input, test_output)
-# Plot the MLP models with activation functions
-plot(mlp_model_4) 
+cat("\nMLP Model 2 (Nonlinear Output, Hyperbolic Tangent Activation):\n")
+evaluate_mlp(mlp_model_2, test_input, test_output)
+plot(mlp_model_2)  # MLP Model 2
