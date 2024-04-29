@@ -106,4 +106,36 @@ test_output3 <- test_time_lagged_data3[, ncol(test_time_lagged_data3)]
 test_input4 <- test_time_lagged_data4[, -ncol(test_time_lagged_data4)]
 test_output4 <- test_time_lagged_data4[, ncol(test_time_lagged_data4)]
 
+# Function to normalize data
+normalize <- function(data) {
+  normalized_data <- scale(data)
+  return(normalized_data)
+}
+
+# Normalize input and output data for train_data
+normalized_input1 <- normalize(input_data1)
+normalized_output1 <- normalize(output_data1)
+
+normalized_input2 <- normalize(input_data2)
+normalized_output2 <- normalize(output_data2)
+
+normalized_input3 <- normalize(input_data3)
+normalized_output3 <- normalize(output_data3)
+
+normalized_input4 <- normalize(input_data4)
+normalized_output4 <- normalize(output_data4)
+
+# Normalize input and output data for test_data
+normalized_test_input1 <- normalize(test_input1)
+normalized_test_output1 <- normalize(test_output1)
+
+normalized_test_input2 <- normalize(test_input2)
+normalized_test_output2 <- normalize(test_output2)
+
+normalized_test_input3 <- normalize(test_input3)
+normalized_test_output3 <- normalize(test_output3)
+
+normalized_test_input4 <- normalize(test_input4)
+normalized_test_output4 <- normalize(test_output4)
+
 
