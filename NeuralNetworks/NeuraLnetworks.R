@@ -117,3 +117,37 @@ mlp_model_2 <- train_mlp_with_activation(train_input, train_output, hidden_layer
 cat("\nMLP Model 2 (Nonlinear Output, Hyperbolic Tangent Activation):\n")
 evaluate_mlp(mlp_model_2, test_input, test_output)
 plot(mlp_model_2)  # MLP Model 2
+
+# Part F
+
+
+# Define the function to visualize prediction output vs. desired output
+visualize_results <- function(predicted_output, test_output) {
+  plot(test_output, type = "l", col = "blue", xlab = "Index", ylab = "Exchange Rate", main = "Prediction vs. Desired Output")
+  lines(predicted_output, type = "l", col = "red")
+  legend("topright", legend = c("Desired Output", "Predicted Output"), col = c("blue", "red"), lty = 1)
+}
+
+
+
+# Calculate RMSE for both models
+rmse_1 <- sqrt(mean((predict(mlp_model_1, test_input) - test_output)^2))
+rmse_2 <- sqrt(mean((predict(mlp_model_2, test_input) - test_output)^2))
+
+# Select the best model based on RMSE
+best_model <- ifelse(rmse_1 < rmse_2, mlp_model_1, mlp_model_2)
+
+# Select the best model based on RMSE
+if (rmse_1 < rmse_2) {
+  best_model <- mlp_model_1
+} else {
+  best_model <- mlp_model_2
+}
+
+# Visualize results for the best model
+predicted_output_best <- predict(best_model, test_input)
+visualize_results(predicted_output_best, test_output)
+
+# Evaluate the best model
+cat("\nBest MLP Model:\n")
+evaluate_mlp(best_model, test_input, test_output)
