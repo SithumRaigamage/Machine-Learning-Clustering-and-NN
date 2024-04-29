@@ -136,30 +136,31 @@ normalized_test_output3 <- normalize(test_output3)
 normalized_test_input4 <- normalize(test_input4)
 normalized_test_output4 <- normalize(test_output4)
 
-# Function to create and train MLP model
-train_mlp <- function(input_data, output_data, test_input, test_output) {
-  # Define neural network architecture
-  mlp_model <- neuralnet(output_data ~ ., 
-                         data = input_data, 
-                         hidden = c(5, 3),  # Example: 2 hidden layers with 5 and 3 nodes respectively
-                         linear.output = FALSE, 
-                         threshold = 0.01)  # Example: Threshold for stopping criteria
+#Part D
+
+# Function to train and evaluate MLP models
+train_and_evaluate_mlp <- function(train_input, train_output, test_input, test_output, hidden_layers, nodes_per_layer, linear_output = FALSE, activation_function = "logistic") {
+  # Train MLP model
+  nn_model <- neuralnet(data = cbind(train_input, train_output),
+                        hidden = hidden_layers,
+                        linear.output = linear_output,
+                        act.fct = activation_function)
   
   # Make predictions on test data
-  test_predictions <- predict(mlp_model, test_input)
+  predicted_output <- predict(nn_model, test_input)
   
   # Calculate evaluation metrics
-  rmse <- sqrt(mean((test_predictions - test_output)^2))
-  mae <- mean(abs(test_predictions - test_output))
-  mape <- mean(abs((test_output - test_predictions)/test_output)) * 100
-  smape <- mean(2 * abs(test_predictions - test_output) / (abs(test_predictions) + abs(test_output))) * 100
+  rmse <- sqrt(mean((predicted_output - test_output)^2))
+  mae <- mean(abs(predicted_output - test_output))
+  mape <- mean(abs((test_output - predicted_output) / test_output)) * 100
+  smape <- 2 * mape / (100 + mape)
   
-  # Return evaluation metrics
-  return(list(RMSE = rmse, MAE = mae, MAPE = mape, sMAPE = smape))
+  # Return evaluation results
+  evaluation_results <- list(RMSE = rmse, MAE = mae, MAPE = mape, sMAPE = smape)
+  return(evaluation_results)
 }
 
-# Train and evaluate MLP models for each case
-evaluation_results1 <- train_mlp(normalized_input1, normalized_output1, normalized_test_input1, normalized_test_output1)
-# Display evaluation results
-print("Evaluation Results for Time-delayed values up to t-1 level:")
-print(evaluation_results1)
+# Example usage
+model_1 <- train_and_evaluate_mlp(normalized_input1, normalized_output1, normalized_test_input1, normalized_test_output1, hidden_layers = c(5), nodes_per_layer = 3)
+
+
