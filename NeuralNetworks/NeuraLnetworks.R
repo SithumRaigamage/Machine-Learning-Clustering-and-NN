@@ -12,142 +12,98 @@ exchange_rate <- exchange[[3]]  # Extract the 3rd column (USD/EUR exchange rate)
 train_data <- exchange_rate[1:400]
 test_data <- exchange_rate[401:500]
 
-# Define the maximum time delay
-max_delay <- 4
 
-# Initialize lists to store input/output matrices for different delays
-input_matrices <- list()
-output_matrices <- list()
+#part b
+# Creating input/output matrix for Train data
 
-# Generate input/output matrices for different delays
-for (delay in 1:max_delay) {
-  input <- data.frame(matrix(NA, nrow = length(train_data) - delay, ncol = delay))
-  for (i in 1:delay) {
-    input[, i] <- lag(train_data, i)[delay:(length(train_data) - 1)]
-  }
-  output <- train_data[(delay + 1):length(train_data)]
-  
-  input_matrices[[delay]] <- input
-  output_matrices[[delay]] <- output
-}
+# Creating input/output matrix for time-delayed values up to t-1 level
+time_lagged_data <- data.frame(G_previous1 = lag(train_data, 1),
+                               G_current = train_data)
+time_lagged_data <- time_lagged_data[complete.cases(time_lagged_data),]
 
-#Part C
+# Creating input/output matrix for time-delayed values up to t-2 level
+time_lagged_data_2 <- data.frame(G_previous2 = lag(train_data, 2),
+                               G_previous1 = lag(train_data, 1),
+                               G_current = train_data)
+time_lagged_data_2 <- time_lagged_data_2[complete.cases(time_lagged_data),]
 
-# Define a function to normalize data
-normalize <- function(data) {
-  normalized_data <- scale(data)
-  return(normalized_data)
-}
+# Creating input/output matrix for time-delayed values up to t-3 level
+time_lagged_data_3 <- data.frame(G_previous3 = lag(train_data, 3),
+                               G_previous2 = lag(train_data, 2),
+                               G_previous1 = lag(train_data, 1),
+                               G_current = train_data)
+time_lagged_data_3 <- time_lagged_data_3[complete.cases(time_lagged_data),]
 
-# Normalize each input matrix for different delays
-for (delay in 1:max_delay) {
-  input_matrices[[delay]] <- normalize(input_matrices[[delay]])
-}
-
-# Define a function to denormalize data
-denormalize <- function(normalized_data, original_data) {
-  denormalized_data <- normalized_data * sd(original_data) + mean(original_data)
-  return(denormalized_data)
-}
-
-# Denormalize each input matrix for different delays
-denormalized_input_matrices <- lapply(input_matrices, function(x) {
-  apply(x, 2, function(col) denormalize(col, exchange_rate))
-})
+# Creating input/output matrix for time-delayed values up to t-4 level
+time_lagged_data_4 <- data.frame(G_previous4 = lag(train_data, 4),
+                               G_previous3 = lag(train_data, 3),
+                               G_previous2 = lag(train_data, 2),
+                               G_previous1 = lag(train_data, 1),
+                               G_current = train_data)
+time_lagged_data_4 <- time_lagged_data_4[complete.cases(time_lagged_data),]
 
 
-#Part D
+# Creating input/output matrix for Test data
 
-# Define a function to create and train MLP models with activation functions
-train_mlp_with_activation <- function(input_data, output_data, hidden_layers, nodes, activation_function, linear_output = TRUE) {
-  # Combine input and output data
-  combined_data <- cbind(input_data, output_data)
-  
-  # Create formula for neuralnet
-  formula <- as.formula(paste("output_data ~", paste(colnames(input_data), collapse = " + ")))
-  
-  # Create and train the MLP model with specified activation function
-  mlp_model <- neuralnet(formula, hidden = c(nodes), 
-                         linear.output = linear_output, act.fct = activation_function, data = combined_data)
-  
-  # Return the trained model
-  return(mlp_model)
-}
+# Creating input/output matrix for time-delayed values up to t-1 level for test_data
+test_time_lagged_data <- data.frame(G_previous1 = lag(test_data, 1),
+                                    G_current = test_data)
+test_time_lagged_data <- test_time_lagged_data[complete.cases(test_time_lagged_data),]
 
-# Define a function to evaluate the performance of the MLP model
-evaluate_mlp <- function(model, test_input, test_output) {
-  # Predict the output using the trained model
-  predicted_output <- predict(model, test_input)
-  
-  # Calculate evaluation metrics
-  rmse <- sqrt(mean((predicted_output - test_output)^2))
-  mae <- mean(abs(predicted_output - test_output))
-  mape <- mean(abs((test_output - predicted_output)/test_output)) * 100
-  smape <- 2 * mape / (100 + mape)
-  
-  # Print evaluation metrics
-  cat("RMSE:", rmse, "\n")
-  cat("MAE:", mae, "\n")
-  cat("MAPE:", mape, "%\n")
-  cat("sMAPE:", smape, "%\n")
-}
+# Creating input/output matrix for time-delayed values up to t-2 level for test_data
+test_time_lagged_data2 <- data.frame(G_previous2 = lag(test_data, 2),
+                                    G_previous1 = lag(test_data, 1),
+                                    G_current = test_data)
+test_time_lagged_data2 <- test_time_lagged_data2[complete.cases(test_time_lagged_data2),]
 
+# Creating input/output matrix for time-delayed values up to t-3 level for test_data
+test_time_lagged_data3 <- data.frame(G_previous3 = lag(test_data, 3),
+                                    G_previous2 = lag(test_data, 2),
+                                    G_previous1 = lag(test_data, 1),
+                                    G_current = test_data)
+test_time_lagged_data3 <- test_time_lagged_data3[complete.cases(test_time_lagged_data3),]
 
-# Define the input and output data for training and testing
-train_input <- denormalized_input_matrices[[2]]  # Change the delay as needed
-train_output <- output_matrices[[2]]  # Change the delay as needed
+# Creating input/output matrix for time-delayed values up to t-4 level for test_data
+test_time_lagged_data4 <- data.frame(G_previous4 = lag(test_data, 4),
+                                    G_previous3 = lag(test_data, 3),
+                                    G_previous2 = lag(test_data, 2),
+                                    G_previous1 = lag(test_data, 1),
+                                    G_current = test_data)
+test_time_lagged_data4 <- test_time_lagged_data4[complete.cases(test_time_lagged_data4),]
 
-test_delay <- 4  # Change the delay as needed
+#Extracting the result for Input and Output for training dataset
+# Extracting input and output data 
+input_data1 <- time_lagged_data[, -ncol(time_lagged_data)]
+output_data1 <- time_lagged_data[, ncol(time_lagged_data)]
 
-test_input <- data.frame(matrix(NA, nrow = length(test_data) - test_delay, ncol = test_delay))
-for (i in 1:test_delay) {
-  test_input[, i] <- lag(test_data, i)[test_delay:(length(test_data) - 1)]
-}
-test_output <- test_data[(test_delay + 1):length(test_data)]
+# Extracting input and output data
+input_data2 <- time_lagged_data_2[, -ncol(time_lagged_data_2)]
+output_data2 <- time_lagged_data_2[, ncol(time_lagged_data_2)]
 
-# Train and evaluate MLP models with different configurations including activation functions
-mlp_model_1 <- train_mlp_with_activation(train_input, train_output, hidden_layers = 1, nodes = c(12),
-                                         activation_function = "logistic", linear_output = TRUE)
-cat("MLP Model 1 (Linear Output, Logistic Activation):\n")
-evaluate_mlp(mlp_model_1, test_input, test_output)
-plot(mlp_model_1)  # MLP Model 1
+# Extracting input and output data
+input_data3 <- time_lagged_data_3[, -ncol(time_lagged_data_3)]
+output_data3 <- time_lagged_data_3[, ncol(time_lagged_data_3)]
 
-mlp_model_2 <- train_mlp_with_activation(train_input, train_output, hidden_layers = 2, nodes = c(12,3),
-                                         activation_function = "tanh", linear_output = FALSE)
-cat("\nMLP Model 2 (Nonlinear Output, Hyperbolic Tangent Activation):\n")
-evaluate_mlp(mlp_model_2, test_input, test_output)
-plot(mlp_model_2)  # MLP Model 2
+# Extracting input and output data
+input_data4 <- time_lagged_data_4[, -ncol(time_lagged_data_4)]
+output_data4 <- time_lagged_data_4[, ncol(time_lagged_data_4)]
 
-# Part F
+#Extracting Input and output for input and output for training data
 
+# Extracting input and output data
+test_input1 <- test_time_lagged_data[, -ncol(test_time_lagged_data)]
+test_output1 <- test_time_lagged_data[, ncol(test_time_lagged_data)]
 
-# Define the function to visualize prediction output vs. desired output
-visualize_results <- function(predicted_output, test_output) {
-  plot(test_output, type = "l", col = "blue", xlab = "Index", ylab = "Exchange Rate", main = "Prediction vs. Desired Output")
-  lines(predicted_output, type = "l", col = "red")
-  legend("topright", legend = c("Desired Output", "Predicted Output"), col = c("blue", "red"), lty = 1)
-}
+# Extracting input and output data
+test_input2 <- test_time_lagged_data2[, -ncol(test_time_lagged_data2)]
+test_output2 <- test_time_lagged_data2[, ncol(test_time_lagged_data2)]
+
+# Extracting input and output data
+test_input3 <- test_time_lagged_data3[, -ncol(test_time_lagged_data3)]
+test_output3 <- test_time_lagged_data3[, ncol(test_time_lagged_data3)]
+
+# Extracting input and output data
+test_input4 <- test_time_lagged_data4[, -ncol(test_time_lagged_data4)]
+test_output4 <- test_time_lagged_data4[, ncol(test_time_lagged_data4)]
 
 
-
-# Calculate RMSE for both models
-rmse_1 <- sqrt(mean((predict(mlp_model_1, test_input) - test_output)^2))
-rmse_2 <- sqrt(mean((predict(mlp_model_2, test_input) - test_output)^2))
-
-# Select the best model based on RMSE
-best_model <- ifelse(rmse_1 < rmse_2, mlp_model_1, mlp_model_2)
-
-# Select the best model based on RMSE
-if (rmse_1 < rmse_2) {
-  best_model <- mlp_model_1
-} else {
-  best_model <- mlp_model_2
-}
-
-# Visualize results for the best model
-predicted_output_best <- predict(best_model, test_input)
-visualize_results(predicted_output_best, test_output)
-
-# Evaluate the best model
-cat("\nBest MLP Model:\n")
-evaluate_mlp(best_model, test_input, test_output)
