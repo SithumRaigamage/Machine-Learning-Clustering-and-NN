@@ -12,8 +12,6 @@ exchange_rate <- exchange[[3]]  # Extract the 3rd column (USD/EUR exchange rate)
 train_data <- exchange_rate[1:400]
 test_data <- exchange_rate[401:500]
 
-
-#part b
 # Creating input/output matrix for Train data
 
 # Creating input/output matrix for time-delayed values up to t-1 level
@@ -23,24 +21,24 @@ time_lagged_data <- time_lagged_data[complete.cases(time_lagged_data),]
 
 # Creating input/output matrix for time-delayed values up to t-2 level
 time_lagged_data_2 <- data.frame(G_previous2 = lag(train_data, 2),
-                               G_previous1 = lag(train_data, 1),
-                               G_current = train_data)
-time_lagged_data_2 <- time_lagged_data_2[complete.cases(time_lagged_data),]
+                                 G_previous1 = lag(train_data, 1),
+                                 G_current = train_data)
+time_lagged_data_2 <- time_lagged_data_2[complete.cases(time_lagged_data_2),]
 
 # Creating input/output matrix for time-delayed values up to t-3 level
 time_lagged_data_3 <- data.frame(G_previous3 = lag(train_data, 3),
-                               G_previous2 = lag(train_data, 2),
-                               G_previous1 = lag(train_data, 1),
-                               G_current = train_data)
-time_lagged_data_3 <- time_lagged_data_3[complete.cases(time_lagged_data),]
+                                 G_previous2 = lag(train_data, 2),
+                                 G_previous1 = lag(train_data, 1),
+                                 G_current = train_data)
+time_lagged_data_3 <- time_lagged_data_3[complete.cases(time_lagged_data_3),]
 
 # Creating input/output matrix for time-delayed values up to t-4 level
 time_lagged_data_4 <- data.frame(G_previous4 = lag(train_data, 4),
-                               G_previous3 = lag(train_data, 3),
-                               G_previous2 = lag(train_data, 2),
-                               G_previous1 = lag(train_data, 1),
-                               G_current = train_data)
-time_lagged_data_4 <- time_lagged_data_4[complete.cases(time_lagged_data),]
+                                 G_previous3 = lag(train_data, 3),
+                                 G_previous2 = lag(train_data, 2),
+                                 G_previous1 = lag(train_data, 1),
+                                 G_current = train_data)
+time_lagged_data_4 <- time_lagged_data_4[complete.cases(time_lagged_data_4),]
 
 
 # Creating input/output matrix for Test data
@@ -52,26 +50,26 @@ test_time_lagged_data <- test_time_lagged_data[complete.cases(test_time_lagged_d
 
 # Creating input/output matrix for time-delayed values up to t-2 level for test_data
 test_time_lagged_data2 <- data.frame(G_previous2 = lag(test_data, 2),
-                                    G_previous1 = lag(test_data, 1),
-                                    G_current = test_data)
+                                     G_previous1 = lag(test_data, 1),
+                                     G_current = test_data)
 test_time_lagged_data2 <- test_time_lagged_data2[complete.cases(test_time_lagged_data2),]
 
 # Creating input/output matrix for time-delayed values up to t-3 level for test_data
 test_time_lagged_data3 <- data.frame(G_previous3 = lag(test_data, 3),
-                                    G_previous2 = lag(test_data, 2),
-                                    G_previous1 = lag(test_data, 1),
-                                    G_current = test_data)
+                                     G_previous2 = lag(test_data, 2),
+                                     G_previous1 = lag(test_data, 1),
+                                     G_current = test_data)
 test_time_lagged_data3 <- test_time_lagged_data3[complete.cases(test_time_lagged_data3),]
 
 # Creating input/output matrix for time-delayed values up to t-4 level for test_data
 test_time_lagged_data4 <- data.frame(G_previous4 = lag(test_data, 4),
-                                    G_previous3 = lag(test_data, 3),
-                                    G_previous2 = lag(test_data, 2),
-                                    G_previous1 = lag(test_data, 1),
-                                    G_current = test_data)
+                                     G_previous3 = lag(test_data, 3),
+                                     G_previous2 = lag(test_data, 2),
+                                     G_previous1 = lag(test_data, 1),
+                                     G_current = test_data)
 test_time_lagged_data4 <- test_time_lagged_data4[complete.cases(test_time_lagged_data4),]
 
-#Extracting the result for Input and Output for training dataset
+# Extracting the result for Input and Output for training dataset
 # Extracting input and output data 
 input_data1 <- time_lagged_data[, -ncol(time_lagged_data)]
 output_data1 <- time_lagged_data[, ncol(time_lagged_data)]
@@ -88,7 +86,7 @@ output_data3 <- time_lagged_data_3[, ncol(time_lagged_data_3)]
 input_data4 <- time_lagged_data_4[, -ncol(time_lagged_data_4)]
 output_data4 <- time_lagged_data_4[, ncol(time_lagged_data_4)]
 
-#Extracting Input and output for input and output for training data
+# Extracting Input and output for input and output for training data
 
 # Extracting input and output data
 test_input1 <- test_time_lagged_data[, -ncol(test_time_lagged_data)]
@@ -138,4 +136,30 @@ normalized_test_output3 <- normalize(test_output3)
 normalized_test_input4 <- normalize(test_input4)
 normalized_test_output4 <- normalize(test_output4)
 
+# Function to create and train MLP model
+train_mlp <- function(input_data, output_data, test_input, test_output) {
+  # Define neural network architecture
+  mlp_model <- neuralnet(output_data ~ ., 
+                         data = input_data, 
+                         hidden = c(5, 3),  # Example: 2 hidden layers with 5 and 3 nodes respectively
+                         linear.output = FALSE, 
+                         threshold = 0.01)  # Example: Threshold for stopping criteria
+  
+  # Make predictions on test data
+  test_predictions <- predict(mlp_model, test_input)
+  
+  # Calculate evaluation metrics
+  rmse <- sqrt(mean((test_predictions - test_output)^2))
+  mae <- mean(abs(test_predictions - test_output))
+  mape <- mean(abs((test_output - test_predictions)/test_output)) * 100
+  smape <- mean(2 * abs(test_predictions - test_output) / (abs(test_predictions) + abs(test_output))) * 100
+  
+  # Return evaluation metrics
+  return(list(RMSE = rmse, MAE = mae, MAPE = mape, sMAPE = smape))
+}
 
+# Train and evaluate MLP models for each case
+evaluation_results1 <- train_mlp(normalized_input1, normalized_output1, normalized_test_input1, normalized_test_output1)
+# Display evaluation results
+print("Evaluation Results for Time-delayed values up to t-1 level:")
+print(evaluation_results1)
