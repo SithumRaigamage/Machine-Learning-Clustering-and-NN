@@ -1,66 +1,47 @@
-#loading new libraries
+# Loading necessary libraries
 library(readxl)
-library(dplyr)
-library(ggplot2)
-library(reshape2)
-library(gridExtra)
-
-#Data Colection
+library(neuralnet)
+library(caret)
 
 # Read the Excel file
 exchange <- read_excel("~/Git hub projects/MachineLearningAssignment/NeuralNetworks/ExchangeUSD.xlsx")
+exchange_rate <- exchange[[3]]  # Extract the 3rd column (USD/EUR exchange rate)
 
-#check the structure of the data
-str(exchange)
+# Split the data into training and testing sets
+train_data <- exchange_rate[1:400]
+test_data <- exchange_rate[401:500]
 
-#checking the summary
-summary(exchange)
-
-# Extract the 3rd column (USD/EUR exchange rates)
-exchange_rate <- exchange[, 3]
-
-#exploring the data
-
-#check the structure of the data
-str(exchange_rate)
-
-#checking the summary
-summary(exchange_rate)
-summary(exchange_rate$`USD/EUR`)
-
-#Part b
-
-# Define the maximum time delay (up to t-4)
+# Define the maximum time delay
 max_delay <- 4
 
-# Initialize a list to store input/output matrices for each time delay
-io_matrices <- list()
+# Initialize lists to store input/output matrices for different delays
+input_matrices <- list()
+output_matrices <- list()
 
-# Loop through each time delay level
+# Generate input/output matrices for different delays
 for (delay in 1:max_delay) {
-  # Create time-delayed input/output matrix for the current delay level
-  io_matrix <- bind_cols()
+  input <- data.frame(matrix(NA, nrow = length(train_data) - delay, ncol = delay))
+  for (i in 1:delay) {
+    input[, i] <- lag(train_data, i)[delay:(length(train_data) - 1)]
+  }
+  output <- train_data[(delay + 1):length(train_data)]
   
-  # Append the current input/output matrix to the list
-  io_matrices[[delay]] <- io_matrix
+  input_matrices[[delay]] <- input
+  output_matrices[[delay]] <- output
 }
 
-# Function to create time-delayed input/output matrix for a given delay level
-create_io_matrix <- function(data, delay) {
-  # Create lagged columns for each time delay
-  lagged_columns <- lapply(1:delay, function(d) lag(data, d))
-  
-  # Combine lagged columns and original data to form the input/output matrix
-  io_matrix <- bind_cols(lagged_columns, G_pred = data)
-  
-  # Remove rows with NA values
-  io_matrix <- io_matrix[complete.cases(io_matrix), ]
-  
-  return(io_matrix)
-}
 
-# Loop through each time delay level and create input/output matrices
-for (delay in 1:max_delay) {
-  io_matrices[[delay]] <- create_io_matrix(exchange_rate, delay)
-}
+#accessing input/output matrices for delay = 1
+input_matrices[[1]]
+output_matrices[[1]]
+#accessing input/output matrices for delay = 2
+input_matrices[[2]]
+output_matrices[[2]]
+#accessing input/output matrices for delay = 3
+input_matrices[[3]]
+output_matrices[[3]]
+#accessing input/output matrices for delay = 4
+input_matrices[[4]]
+output_matrices[[4]]
+
 
