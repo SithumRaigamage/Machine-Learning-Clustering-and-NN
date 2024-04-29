@@ -6,7 +6,6 @@ library(tidyr)
 library(NbClust)
 library(factoextra)
 library(clusterCrit)
-
 library(cluster)
 
 #1st SubTask Objectives
@@ -239,7 +238,7 @@ selected_components <- which(cumulative_variance > 0.85)
 print(selected_components)
 
 #transforming the original data with attributes
-transformed_data <-as.data.frame(predict(pca_result, newdata = cleaned_data)[, selected_components])
+transformed_data <-as.data.frame(predict(pca_result, newdata = cleaned_data)[,1:selected_components])
 
 #printing the tranformed_data
 print(head(transformed_data))
