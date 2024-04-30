@@ -191,4 +191,83 @@ abline(h = avg_sil_width, lty = 2)
 # Print average silhouette width score
 print(paste("Average Silhouette Width Score:", avg_sil_width))
 
+#2nd Sub Objective
+
+#Part e
+
+#getting the dataset cleaned_data (after removing outliers)  not scaled
+
+#Performing PCA analysis using prcomp
+pca_result <-prcomp(cleaned_data , center = TRUE, scale. = TRUE)
+
+#printing the pca analysis result
+print(pca_result)
+
+#printing the explained variance ratio eigenvalues and eigenvectors
+summary(pca_result)
+
+# Cumulative proportion of variance explained
+cumulative_variance <- cumsum(pca_result$sdev^2 / sum(pca_result$sdev^2))
+print(cumulative_variance)
+
+#plot the cumulative proportion of variance explained
+plot(cumulative_variance, type = "b", xlab = "Number of Principal Components", ylab = "Cumulative Proportion of Variance Explained", main = "Cumulative Proportion of Variance Explained by Principal Components")
+
+# Choosing  the number of principal components that provide at least or more than cumulative score > 85%
+selected_components <- which(cumulative_variance > 0.85)
+
+#printing the no of selected components
+print(selected_components)
+
+#transforming the original data with attributes
+transformed_data <-as.data.frame(predict(pca_result, newdata = cleaned_data)[,1:selected_components])
+
+#printing the tranformed_data
+print(head(transformed_data))
+
+#Part F
+
+# Method for clustering
+
+# Determine the number of clusters using NbClust library
+nbclust_result <- NbClust(transformed_data, distance = "euclidean", min.nc = 2, max.nc = 10, method = "kmeans", index = "all")
+#number of clusters-k=2
+
+# Print the result
+print(nbclust_result)
+
+# Determine the number of clusters using the Elbow method
+wss <- numeric(10)
+for (i in 1:10) {
+  wss[i] <- sum(kmeans(transformed_data, centers = i)$withinss)
+}
+#assigning the dataframe
+elbow_data <- data.frame(Clusters = 1:10, WSS = wss)
+
+# Plotting the Elbow method results
+elbow_plot <- ggplot(elbow_data, aes(x = Clusters, y = WSS)) +
+  geom_line() +
+  geom_point() +
+  labs(x = "Number of clusters", y = "Within-cluster sum of squares (WSS)", 
+       title = "Elbow Method for Optimal K") +
+  theme_minimal()
+
+#printing the elbow plot
+print(elbow_plot)
+#Clustering k is 2 close to 2
+
+# Determining the number of clusters using Gap statistics
+fviz_nbclust(transformed_data, kmeans, method = 'gap_stat')
+#Clustering k is 3
+
+# Determine the number of clusters using the Silhouette method
+fviz_nbclust(transformed_data, kmeans, method = 'silhouette')
+#Clustering k =2
+
+#NbCluster method -2
+#Elbow method -2 (K value taken based on elbow in plot)
+#Gap statistics -3
+#Silhouette method -2 
+
+
 
