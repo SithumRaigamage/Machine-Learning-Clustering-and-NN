@@ -126,3 +126,52 @@ fviz_nbclust(scaled_data, kmeans, method = 'gap_stat')
 fviz_nbclust(scaled_data, kmeans, method = 'silhouette')
 #Clustering k =2
 
+#NbCluster method -2
+#Elbow method -2 (K value taken based on elbow in plot)
+#Gap statistics -3
+#Silhouette method -2 
+
+#Part C
+
+#Assigning the K value based on the result above I got previously 
+#Assigning 2 since NbCluster,Elbow and silhouette returned 2
+k<-2
+
+#K means clustering
+kmeans_result <- kmeans(scaled_data,centers = k)
+
+#printing kmeans result
+print(kmeans_result)
+
+#printing kmeans centers
+print(kmeans_result$centers)
+
+#printing clustered results
+clustered_data <-cbind(scaled_data,Cluster=kmeans_result$cluster)
+print(clustered_data)
+
+#Calculating BSS
+BSS <- sum((apply(kmeans_result$centers,1, function(center) sum((center - colMeans(scaled_data))^2))) * table(kmeans_result$cluster))
+#Calculating TSS
+TSS <- sum(apply(scaled_data, 2, function(feature) sum((feature - mean(feature))^2)))
+#Calculating WSS
+WSS <- kmeans_result$tot.withinss
+
+#Calculate the ratio of BSS and TSS
+Ratio_BSS_and_TSS <-BSS/TSS
+print(paste("Ratio of BSS/TSS :", Ratio_BSS_and_TSS))
+
+# Convert scaled_data to a data frame
+cleaned_data_df <- as.data.frame(scaled_data)
+
+# Adding cluster assignment to the original dataset
+clustered_dataset <- cbind(cleaned_data_df, Cluster = factor(kmeans_result$cluster))
+
+# Plotting the data points with color-coded clusters
+ggplot(clustered_dataset, aes(x = cleaned_data_df[,1], y = cleaned_data_df[,2], color = Cluster)) +
+  geom_point() +
+  labs(title = "Data Points after K-means Clustering (2 Clusters)",
+       x = "Principal Component 1",
+       y = "Principal Component 2") +
+  theme_minimal()
+
