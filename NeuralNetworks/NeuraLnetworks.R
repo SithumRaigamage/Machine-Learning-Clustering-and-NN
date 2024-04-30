@@ -297,7 +297,7 @@ evaluation_results_11
 # Train MLP model for configuration 12
 nn_model_12 <- neuralnet(G_current ~ G_previous1 + G_previous2 + G_previous3 + G_previous4,
                          data = time_lagged_data_4,
-                         hidden = c(16,3),  # Example hidden layers for model 10
+                         hidden = c(6,3),  # Example hidden layers for model 10
                          linear.output = TRUE,  # Example linear output
                          act.fct = "logistic")  # Example activation function for model 10
 plot(nn_model_12)
@@ -313,3 +313,49 @@ evaluation_results_12 <- list(
 )
 evaluation_results_12
 
+
+#Part H
+
+# Compile RMSE values for each configuration
+rmse_values <- c(evaluation_results_1$RMSE, evaluation_results_2$RMSE, evaluation_results_3$RMSE,
+                 evaluation_results_4$RMSE, evaluation_results_5$RMSE, evaluation_results_6$RMSE,
+                 evaluation_results_7$RMSE, evaluation_results_8$RMSE, evaluation_results_9$RMSE,
+                 evaluation_results_10$RMSE, evaluation_results_11$RMSE, evaluation_results_12$RMSE)
+
+evaluation_results_1$RMSE
+evaluation_results_2$RMSE
+evaluation_results_3$RMSE
+evaluation_results_4$RMSE
+evaluation_results_5$RMSE
+evaluation_results_6$RMSE
+evaluation_results_7$RMSE
+evaluation_results_8$RMSE
+evaluation_results_9$RMSE
+evaluation_results_10$RMSE
+evaluation_results_11$RMSE
+evaluation_results_12$RMSE
+
+# Find the configuration with the lowest RMSE
+best_configuration <- which.min(rmse_values)
+
+# Print the best configuration and its RMSE value
+cat("Best configuration:", best_configuration, "\n")
+cat("RMSE:", rmse_values[best_configuration], "\n")
+
+# Plotting predicted vs. actual values for "Config 4"
+plot(test_time_lagged_data$G_current, predicted_output_1,
+     xlab = "Actual Exchange Rate",
+     ylab = "Predicted Exchange Rate",
+     main = "Actual vs. Predicted Exchange Rate (Config 1)",
+     col = "blue")
+abline(0, 1, col = "red")  # Adding a reference line for perfect prediction
+legend("topleft", legend = "Perfect Prediction", col = "red", lty = 1)
+
+
+# Plotting a grid
+plot(test_time_lagged_data$G_current, type = "l", col = "blue", lwd = 2,
+     xlab = "Time", ylab = "Exchange Rate",
+     main = "Actual Exchange Rate over Time")
+lines(predicted_output_1, col = "red", lty = 2, lwd = 2)
+legend("topright", legend = c("Actual", "Predicted"),
+       col = c("blue", "red"), lty = c(1, 2), lwd = c(2, 2))
