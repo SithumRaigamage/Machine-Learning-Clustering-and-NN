@@ -329,7 +329,7 @@ ggplot(clustered_data_pca, aes(x = transformed_data_df[,1], y = transformed_data
 #transformed data
 
 # Computing silhouette width for each observation
-sil_width_pca <- silhouette(kmeans_result_pca$cluster, dist(transformed_data))
+sil_width_pca <- silhouette(kmeans_result_pca$cluster, dist())
 fviz_silhouette(sil_width_pca)
 
 # Add average silhouette width to plot
@@ -339,3 +339,14 @@ abline(h = avg_sil_width_pca, lty = 2)
 # Print average silhouette width score
 print(paste("Average Silhouette Width Score:", avg_sil_width_pca))
 
+#Part I
+library(fpc)
+library(cluster)
+# Compute the Calinski-Harabasz Index
+calinski_harabasz <- round(calinhara(transformed_data, kmeans_result_pca$cluster), digits = 2)
+
+# Print the Calinski-Harabasz Index
+print(paste("Calinski-Harabasz Index:", calinski_harabasz))
+
+# Plotting the clusters with centroids
+fviz_cluster(kmeans_result_pca, data = transformed_data, geom = "point", stand = FALSE, main = "Clusters with Centroids")
