@@ -229,6 +229,8 @@ print(head(transformed_data))
 
 # Method for clustering
 
+#doing automated tools for the new dataset(transformed_data)
+
 # Determine the number of clusters using NbClust library
 nbclust_result <- NbClust(transformed_data, distance = "euclidean", min.nc = 2, max.nc = 10, method = "kmeans", index = "all")
 #number of clusters-k=2
@@ -268,6 +270,59 @@ fviz_nbclust(transformed_data, kmeans, method = 'silhouette')
 #Elbow method -2 (K value taken based on elbow in plot)
 #Gap statistics -3
 #Silhouette method -2 
+
+#Part G
+
+#Assigning the K value based on the result above I got previously for transformed_data
+#Assigning 3 since NbCluster and Elbow returned 3
+optimal_k<-2
+
+# Perform k-means clustering with the optimal value of k
+kmeans_result_pca <- kmeans(transformed_data, centers = optimal_k)
+
+# Print k-means result
+print(kmeans_result_pca)
+
+# Print cluster centers
+print(kmeans_result_pca$centers)
+
+# Add cluster assignment to the transformed data
+clustered_data_pca <- cbind(transformed_data, Cluster = kmeans_result_pca$cluster)
+
+# Print clustered results
+print(clustered_data_pca)
+
+# Calculating BSS (Between-Cluster Sums of Squares)
+BSS_pca <- sum((apply(kmeans_result_pca$centers, 1, function(center) sum((center - colMeans(transformed_data))^2))) * table(kmeans_result_pca$cluster))
+
+# Calculating TSS (Total Sum of Squares)
+TSS_pca <- sum(apply(transformed_data, 2, function(feature) sum((feature - mean(feature))^2)))
+
+# Calculating WSS (Within-Cluster Sums of Squares)
+WSS_pca <- kmeans_result_pca$tot.withinss
+
+# Calculating the ratio of BSS and TSS
+Ratio_BSS_and_TSS_pca <- BSS_pca / TSS_pca
+
+# Printing the ratio of BSS and TSS
+print(paste("Ratio of BSS/TSS:", Ratio_BSS_and_TSS_pca))
+
+# Printing the within-cluster sums of squares (WSS) index
+print(paste("Within-cluster Sums of Squares (WSS):", WSS_pca))
+
+# Convert transformed_data to a data frame
+transformed_data_df <- as.data.frame(transformed_data)
+
+# Adding cluster assignment to the transformed dataset
+clustered_data_pca <- cbind(transformed_data_df, Cluster = factor(kmeans_result_pca$cluster))
+
+# Plotting the data points with color-coded clusters
+ggplot(clustered_data_pca, aes(x = transformed_data_df[,1], y = transformed_data_df[,2], color = Cluster)) +
+  geom_point() +
+  labs(title = "Data Points after K-means Clustering (2 Clusters)",
+       x = "Principal Component 1",
+       y = "Principal Component 2") +
+  theme_minimal()
 
 
 
