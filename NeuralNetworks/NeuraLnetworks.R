@@ -109,7 +109,7 @@ nn_model_2 <- neuralnet(G_current ~ G_previous1 ,
                         data = time_lagged_data,
                         hidden = c(10),  # Example hidden layers for model 2
                         linear.output = TRUE,  # Example linear output
-                        act.fct = "tanh")  # Example activation function for model 2
+                        act.fct = "logistic")  # Example activation function for model 2
 plot(nn_model_2)
 # Make predictions on test data
 predicted_output_2 <- predict(nn_model_2, test_time_lagged_data)
@@ -190,7 +190,7 @@ plot(nn_model_6)
 # Make predictions on test data
 predicted_output_6 <- predict(nn_model_6, test_time_lagged_data2)
 
-# Calculate evaluation metrics for configuration 5
+# Calculate evaluation metrics for configuration 6
 evaluation_results_6 <- list(
   RMSE = sqrt(mean((predicted_output_6 - test_time_lagged_data2$G_current)^2)),
   MAE = mean(abs(predicted_output_6 - test_time_lagged_data2$G_current)),
@@ -209,7 +209,7 @@ plot(nn_model_7)
 # Make predictions on test data
 predicted_output_7 <- predict(nn_model_7, test_time_lagged_data3)
 
-# Calculate evaluation metrics for configuration 5
+# Calculate evaluation metrics for configuration 7
 evaluation_results_7 <- list(
   RMSE = sqrt(mean((predicted_output_7 - test_time_lagged_data3$G_current)^2)),
   MAE = mean(abs(predicted_output_7 - test_time_lagged_data3$G_current)),
@@ -228,7 +228,7 @@ plot(nn_model_8)
 # Make predictions on test data
 predicted_output_8 <- predict(nn_model_8, test_time_lagged_data3)
 
-# Calculate evaluation metrics for configuration 5
+# Calculate evaluation metrics for configuration 8
 evaluation_results_8 <- list(
   RMSE = sqrt(mean((predicted_output_8 - test_time_lagged_data3$G_current)^2)),
   MAE = mean(abs(predicted_output_8 - test_time_lagged_data3$G_current)),
@@ -247,7 +247,7 @@ plot(nn_model_9)
 # Make predictions on test data
 predicted_output_9 <- predict(nn_model_9, test_time_lagged_data3)
 
-# Calculate evaluation metrics for configuration 5
+# Calculate evaluation metrics for configuration 9
 evaluation_results_9 <- list(
   RMSE = sqrt(mean((predicted_output_9 - test_time_lagged_data3$G_current)^2)),
   MAE = mean(abs(predicted_output_9 - test_time_lagged_data3$G_current)),
@@ -275,25 +275,6 @@ evaluation_results_10 <- list(
 )
 evaluation_results_10
 
-# Train MLP model for configuration 10
-nn_model_10 <- neuralnet(G_current ~ G_previous1 + G_previous2 + G_previous3 + G_previous4,
-                         data = time_lagged_data_4,
-                         hidden = c(10),  # Example hidden layers for model 10
-                         linear.output = TRUE,  # Example linear output
-                         act.fct = "logistic")  # Example activation function for model 10
-plot(nn_model_10)
-# Make predictions on test data
-predicted_output_10 <- predict(nn_model_10, test_time_lagged_data4)
-
-# Calculate evaluation metrics for configuration 5
-evaluation_results_10 <- list(
-  RMSE = sqrt(mean((predicted_output_10 - test_time_lagged_data4$G_current)^2)),
-  MAE = mean(abs(predicted_output_10 - test_time_lagged_data4$G_current)),
-  MAPE = mean(abs((test_time_lagged_data4$G_current - predicted_output_10) / test_time_lagged_data4$G_current)) * 100,
-  sMAPE = 2 * mean(abs((test_time_lagged_data4$G_current - predicted_output_10) / (abs(test_time_lagged_data4$G_current) + abs(predicted_output_10)))) * 100
-)
-evaluation_results_10
-
 # Train MLP model for configuration 11
 nn_model_11 <- neuralnet(G_current ~ G_previous1 + G_previous2 + G_previous3 + G_previous4,
                          data = time_lagged_data_4,
@@ -305,7 +286,7 @@ plot(nn_model_11)
 predicted_output_11 <- predict(nn_model_11, test_time_lagged_data4)
 
 # Calculate evaluation metrics for configuration 5
-evaluation_results_10 <- list(
+evaluation_results_11 <- list(
   RMSE = sqrt(mean((predicted_output_11 - test_time_lagged_data4$G_current)^2)),
   MAE = mean(abs(predicted_output_11 - test_time_lagged_data4$G_current)),
   MAPE = mean(abs((test_time_lagged_data4$G_current - predicted_output_11) / test_time_lagged_data4$G_current)) * 100,
@@ -316,7 +297,7 @@ evaluation_results_11
 # Train MLP model for configuration 12
 nn_model_12 <- neuralnet(G_current ~ G_previous1 + G_previous2 + G_previous3 + G_previous4,
                          data = time_lagged_data_4,
-                         hidden = c(10),  # Example hidden layers for model 10
+                         hidden = c(16,3),  # Example hidden layers for model 10
                          linear.output = TRUE,  # Example linear output
                          act.fct = "logistic")  # Example activation function for model 10
 plot(nn_model_12)
@@ -331,12 +312,4 @@ evaluation_results_12 <- list(
   sMAPE = 2 * mean(abs((test_time_lagged_data4$G_current - predicted_output_12) / (abs(test_time_lagged_data4$G_current) + abs(predicted_output_12)))) * 100
 )
 evaluation_results_12
-
-
-
-
-
-
-
-
 
