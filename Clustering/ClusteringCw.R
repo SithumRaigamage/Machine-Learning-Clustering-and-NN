@@ -324,5 +324,18 @@ ggplot(clustered_data_pca, aes(x = transformed_data_df[,1], y = transformed_data
        y = "Principal Component 2") +
   theme_minimal()
 
+#Part H
 
+#transformed data
+
+# Computing silhouette width for each observation
+sil_width_pca <- silhouette(kmeans_result_pca$cluster, dist(transformed_data))
+fviz_silhouette(sil_width_pca)
+
+# Add average silhouette width to plot
+avg_sil_width_pca <- mean(sil_width_pca[, "sil_width"])
+abline(h = avg_sil_width_pca, lty = 2)
+
+# Print average silhouette width score
+print(paste("Average Silhouette Width Score:", avg_sil_width_pca))
 
