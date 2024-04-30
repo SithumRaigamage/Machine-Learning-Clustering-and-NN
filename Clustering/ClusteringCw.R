@@ -175,3 +175,20 @@ ggplot(clustered_dataset, aes(x = cleaned_data_df[,1], y = cleaned_data_df[,2], 
        y = "Principal Component 2") +
   theme_minimal()
 
+#Part D
+
+#loading the library cluster
+library(cluster)
+
+# Computing silhouette width for each observation
+sil_width <- silhouette(kmeans_result$cluster,dist(scaled_data))
+fviz_silhouette(sil_width)
+
+# Add average silhouette width to plot
+avg_sil_width <- mean(sil_width[, "sil_width"])
+abline(h = avg_sil_width, lty = 2)
+
+# Print average silhouette width score
+print(paste("Average Silhouette Width Score:", avg_sil_width))
+
+
