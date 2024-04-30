@@ -50,6 +50,7 @@ selected_columns <- c("fixed acidity", "volatile acidity", "citric acid", "resid
 
 # Remove outliers for each selected attribute
 for (col_name in selected_columns) {
+  print(col_name)
   wine_data <- remove_outliers_IQR(wine_data, col_name)
 }
 # Clear null rows in the dataframe
@@ -90,9 +91,38 @@ boxplot(scaled_data)
 
 # Method for clustering
 
-method <- "kmeans"
-
 # Determine the number of clusters using NbClust library
-nbclust_result <- NbClust(cleaned_data, distance = "euclidean", min.nc = 2, max.nc = 10, method = method, index = "all")
+nbclust_result <- NbClust(scaled_data, distance = "euclidean", min.nc = 2, max.nc = 10, method = "kmeans", index = "all")
 #number of clusters-k=2
+
+# Print the result
+print(nbclust_result)
+
+# Determine the number of clusters using the Elbow method
+wss <- numeric(10)
+for (i in 1:10) {
+  wss[i] <- sum(kmeans(scaled_data, centers = i)$withinss)
+}
+#assigning the dataframe
+elbow_data <- data.frame(Clusters = 1:10, WSS = wss)
+
+# Plotting the Elbow method results
+elbow_plot <- ggplot(elbow_data, aes(x = Clusters, y = WSS)) +
+  geom_line() +
+  geom_point() +
+  labs(x = "Number of clusters", y = "Within-cluster sum of squares (WSS)", 
+       title = "Elbow Method for Optimal K") +
+  theme_minimal()
+
+#printing the elbow plot
+print(elbow_plot)
+#Clustering k is 2 close to 2
+
+# Determining the number of clusters using Gap statistics
+fviz_nbclust(scaled_data, kmeans, method = 'gap_stat')
+#Clustering k is 3
+
+# Determine the number of clusters using the Silhouette method
+fviz_nbclust(scaled_data, kmeans, method = 'silhouette')
+#Clustering k =2
 
