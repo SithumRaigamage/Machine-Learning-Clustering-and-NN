@@ -69,98 +69,95 @@ test_time_lagged_data4 <- data.frame(G_previous4 = lag(test_data, 4),
                                      G_current = test_data)
 test_time_lagged_data4 <- test_time_lagged_data4[complete.cases(test_time_lagged_data4),]
 
-# Extracting the result for Input and Output for training dataset
-# Extracting input and output data 
-input_data1 <- time_lagged_data[, -ncol(time_lagged_data)]
-output_data1 <- time_lagged_data[, ncol(time_lagged_data)]
-
-# Extracting input and output data
-input_data2 <- time_lagged_data_2[, -ncol(time_lagged_data_2)]
-output_data2 <- time_lagged_data_2[, ncol(time_lagged_data_2)]
-
-# Extracting input and output data
-input_data3 <- time_lagged_data_3[, -ncol(time_lagged_data_3)]
-output_data3 <- time_lagged_data_3[, ncol(time_lagged_data_3)]
-
-# Extracting input and output data
-input_data4 <- time_lagged_data_4[, -ncol(time_lagged_data_4)]
-output_data4 <- time_lagged_data_4[, ncol(time_lagged_data_4)]
-
-# Extracting Input and output for input and output for training data
-
-# Extracting input and output data
-test_input1 <- test_time_lagged_data[, -ncol(test_time_lagged_data)]
-test_output1 <- test_time_lagged_data[, ncol(test_time_lagged_data)]
-
-# Extracting input and output data
-test_input2 <- test_time_lagged_data2[, -ncol(test_time_lagged_data2)]
-test_output2 <- test_time_lagged_data2[, ncol(test_time_lagged_data2)]
-
-# Extracting input and output data
-test_input3 <- test_time_lagged_data3[, -ncol(test_time_lagged_data3)]
-test_output3 <- test_time_lagged_data3[, ncol(test_time_lagged_data3)]
-
-# Extracting input and output data
-test_input4 <- test_time_lagged_data4[, -ncol(test_time_lagged_data4)]
-test_output4 <- test_time_lagged_data4[, ncol(test_time_lagged_data4)]
-
 # Function to normalize data
 normalize <- function(data) {
   normalized_data <- scale(data)
   return(normalized_data)
 }
 
-# Normalize input and output data for train_data
-normalized_input1 <- normalize(input_data1)
-normalized_output1 <- normalize(output_data1)
+# Normalize time_lagged_data for training
+normalized_time_lagged_data <- lapply(list(time_lagged_data, time_lagged_data_2, time_lagged_data_3, time_lagged_data_4), normalize)
 
-normalized_input2 <- normalize(input_data2)
-normalized_output2 <- normalize(output_data2)
-
-normalized_input3 <- normalize(input_data3)
-normalized_output3 <- normalize(output_data3)
-
-normalized_input4 <- normalize(input_data4)
-normalized_output4 <- normalize(output_data4)
-
-# Normalize input and output data for test_data
-normalized_test_input1 <- normalize(test_input1)
-normalized_test_output1 <- normalize(test_output1)
-
-normalized_test_input2 <- normalize(test_input2)
-normalized_test_output2 <- normalize(test_output2)
-
-normalized_test_input3 <- normalize(test_input3)
-normalized_test_output3 <- normalize(test_output3)
-
-normalized_test_input4 <- normalize(test_input4)
-normalized_test_output4 <- normalize(test_output4)
+# Normalize test_time_lagged_data for testing
+normalized_test_time_lagged_data <- lapply(list(test_time_lagged_data, test_time_lagged_data2, test_time_lagged_data3, test_time_lagged_data4), normalize)
 
 #Part D
 
-# Function to train and evaluate MLP models
-train_and_evaluate_mlp <- function(train_input, train_output, test_input, test_output, hidden_layers, nodes_per_layer, linear_output = FALSE, activation_function = "logistic") {
-  # Train MLP model
-  nn_model <- neuralnet(data = cbind(train_input, train_output),
-                        hidden = hidden_layers,
-                        linear.output = linear_output,
-                        act.fct = activation_function)
-  
-  # Make predictions on test data
-  predicted_output <- predict(nn_model, test_input)
-  
-  # Calculate evaluation metrics
-  rmse <- sqrt(mean((predicted_output - test_output)^2))
-  mae <- mean(abs(predicted_output - test_output))
-  mape <- mean(abs((test_output - predicted_output) / test_output)) * 100
-  smape <- 2 * mape / (100 + mape)
-  
-  # Return evaluation results
-  evaluation_results <- list(RMSE = rmse, MAE = mae, MAPE = mape, sMAPE = smape)
-  return(evaluation_results)
-}
 
-# Example usage
-model_1 <- train_and_evaluate_mlp(normalized_input1, normalized_output1, normalized_test_input1, normalized_test_output1, hidden_layers = c(5), nodes_per_layer = 3)
+# Train MLP model for configuration 1
+nn_model_1 <- neuralnet(G_current ~ G_previous1 ,
+                        data = time_lagged_data,
+                        hidden = c(5),  # Example hidden layers
+                        linear.output = TRUE,  # Example linear output
+                        act.fct = "logistic")  # Example activation function
+plot(nn_model_1)
+# Make predictions on test data
+predicted_output_1 <- predict(nn_model_1, test_time_lagged_data)
+
+# Calculate evaluation metrics for configuration 1
+evaluation_results_1 <- list(
+  RMSE = sqrt(mean((predicted_output_1 - test_time_lagged_data$G_current)^2)),
+  MAE = mean(abs(predicted_output_1 - test_time_lagged_data$G_current)),
+  MAPE = mean(abs((test_time_lagged_data$G_current - predicted_output_1) / test_time_lagged_data$G_current)) * 100,
+  sMAPE = 2 * mean(abs((test_time_lagged_data$G_current - predicted_output_1) / (abs(test_time_lagged_data$G_current) + abs(predicted_output_1)))) * 100
+)
+evaluation_results_1
+
+# Train MLP model for configuration 2
+nn_model_2 <- neuralnet(G_current ~ G_previous1 ,
+                        data = time_lagged_data,
+                        hidden = c(10),  # Example hidden layers for model 2
+                        linear.output = TRUE,  # Example linear output
+                        act.fct = "tanh")  # Example activation function for model 2
+plot(nn_model_2)
+# Make predictions on test data
+predicted_output_2 <- predict(nn_model_2, test_time_lagged_data)
+
+# Calculate evaluation metrics for configuration 2
+evaluation_results_2 <- list(
+  RMSE = sqrt(mean((predicted_output_2 - test_time_lagged_data$G_current)^2)),
+  MAE = mean(abs(predicted_output_2 - test_time_lagged_data$G_current)),
+  MAPE = mean(abs((test_time_lagged_data$G_current - predicted_output_2) / test_time_lagged_data$G_current)) * 100,
+  sMAPE = 2 * mean(abs((test_time_lagged_data$G_current - predicted_output_2) / (abs(test_time_lagged_data$G_current) + abs(predicted_output_2)))) * 100
+)
+evaluation_results_2
+
+# Train MLP model for configuration 3
+nn_model_3 <- neuralnet(G_current ~ G_previous1 ,
+                        data = time_lagged_data,
+                        hidden = c(5, 5),  # Example hidden layers for model 3
+                        linear.output = FALSE,  # Example linear output
+                        act.fct = "logistic")  # Example activation function for model 3
+plot(nn_model_3)
+# Make predictions on test data
+predicted_output_3 <- predict(nn_model_3, test_time_lagged_data)
+
+# Calculate evaluation metrics for configuration 3
+evaluation_results_3 <- list(
+  RMSE = sqrt(mean((predicted_output_3 - test_time_lagged_data$G_current)^2)),
+  MAE = mean(abs(predicted_output_3 - test_time_lagged_data$G_current)),
+  MAPE = mean(abs((test_time_lagged_data$G_current - predicted_output_3) / test_time_lagged_data$G_current)) * 100,
+  sMAPE = 2 * mean(abs((test_time_lagged_data$G_current - predicted_output_3) / (abs(test_time_lagged_data$G_current) + abs(predicted_output_3)))) * 100
+)
+evaluation_results_3
+
+# Train MLP model for configuration 2
+nn_model_4 <- neuralnet(G_current ~ G_previous1 + G_previous2,
+                        data = time_lagged_data_2,
+                        hidden = c(5, 5),  # Example hidden layers for model 4
+                        linear.output = TRUE,  # Example linear output
+                        act.fct = "threshold")  # Example activation function for model 4
+plot(nn_model_4)
+# Make predictions on test data
+predicted_output_4 <- predict(nn_model_4, test_time_lagged_data2)
+
+# Calculate evaluation metrics for configuration 3
+evaluation_results_4 <- list(
+  RMSE = sqrt(mean((predicted_output_3 - test_time_lagged_data2$G_current)^2)),
+  MAE = mean(abs(predicted_output_3 - test_time_lagged_data2$G_current)),
+  MAPE = mean(abs((test_time_lagged_data2$G_current - predicted_output_3) / test_time_lagged_data2$G_current)) * 100,
+  sMAPE = 2 * mean(abs((test_time_lagged_data2$G_current - predicted_output_3) / (abs(test_time_lagged_data2$G_current) + abs(predicted_output_3)))) * 100
+)
+evaluation_results_4
 
 
