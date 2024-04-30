@@ -8,6 +8,24 @@ library(factoextra)
 library(clusterCrit)
 library(cluster)
 
+# Loading the dataset 
+wine_dataset <- read_excel("Git hub projects/MachineLearningAssignment/Clustering/Whitewine_v6.xlsx")
+
+# Remove the last column (Quality) as it is not used 
+wine_data <- wine_dataset[, -12]
+
+# Exploring the dataset
+head(wine_data)
+
+# Exploring the structure of the dataset
+str(wine_data)
+
+# Explore the summary
+summary(wine_data)
+
+#plot the boxplot without removing outliers
+boxplot(wine_data)
+
 # Function to remove outliers using IQR
 remove_outliers_IQR <- function(df, column_name) {
   # Calculate Q1, Q3, and IQR
@@ -25,27 +43,6 @@ remove_outliers_IQR <- function(df, column_name) {
   return(df)
 }
 
-# Loading the dataset 
-wine_dataset <- read_excel("Git hub projects/MachineLearningAssignment/Clustering/Whitewine_v6.xlsx")
-
-
-# Remove the last column (Quality) as it is not used 
-wine_data <- wine_dataset[, -12]
-
-# Exploring the dataset
-head(wine_data)
-
-# Exploring the structure of the dataset
-str(wine_data)
-
-# Explore the summary
-summary(wine_data)
-
-# Printing the data column-wise
-for (i in 1:11) {
-  print(wine_dataset[, i])
-}
-
 # Selecting only the attributes given above (attributes 1 to 11)
 selected_columns <- c("fixed acidity", "volatile acidity", "citric acid", "residual sugar",
                       "chlorides", "free sulfur dioxide", "total sulfur dioxide",
@@ -56,10 +53,10 @@ for (col_name in selected_columns) {
   wine_data <- remove_outliers_IQR(wine_data, col_name)
 }
 # Clear null rows in the dataframe
-wine_data <- na.omit(wine_data)
+cleaned_data <- na.omit(wine_data)
 
 # Customizing the boxplot
-boxplot(wine_data,
+boxplot(cleaned_data,
         main = "Boxplot of Wine Attributes",
         ylab = "Attribute Values",
         xlab = "Attributes",
@@ -73,7 +70,29 @@ boxplot(wine_data,
         las = 2,             # Rotate x-axis labels vertically
         cex.axis = 0.8       # Adjust size of axis labels
 )
+# Print summary statistics of cleaned data
+summary(cleaned_data)
+
+# Print the first few rows of cleaned data
+head(cleaned_data)
+
+# Check the dimensions to ensure outliers were removed
+dim(cleaned_data)
 
 # Performing the scaling of data
-scaled_data <- scale(wine_data)
+scaled_data <- scale(cleaned_data)
 scaled_data
+
+#ploting the boxplot after scaling
+boxplot(scaled_data)
+
+# Part b
+
+# Method for clustering
+
+method <- "kmeans"
+
+# Determine the number of clusters using NbClust library
+nbclust_result <- NbClust(cleaned_data, distance = "euclidean", min.nc = 2, max.nc = 10, method = method, index = "all")
+#number of clusters-k=2
+
