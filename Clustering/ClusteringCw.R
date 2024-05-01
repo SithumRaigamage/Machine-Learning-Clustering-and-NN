@@ -191,14 +191,14 @@ abline(h = avg_sil_width, lty = 2)
 # Print average silhouette width score
 print(paste("Average Silhouette Width Score:", avg_sil_width))
 
-#2nd Sub Objective
+#2nd SubTask
 
 #Part e
 
-#getting the dataset cleaned_data (after removing outliers)  not scaled
+#getting the dataset  scaled dataset
 
 #Performing PCA analysis using prcomp
-pca_result <-prcomp(cleaned_data , center = TRUE, scale. = TRUE)
+pca_result <-prcomp(wine_dataset , center = TRUE, scale. = TRUE)
 
 #printing the pca analysis result
 print(pca_result)
@@ -220,7 +220,7 @@ selected_components <- which(cumulative_variance > 0.85)
 print(selected_components)
 
 #transforming the original data with attributes
-transformed_data <-as.data.frame(predict(pca_result, newdata = cleaned_data)[,1:selected_components])
+transformed_data <-as.data.frame(predict(pca_result, newdata = wine_dataset)[,1:selected_components])
 
 #printing the tranformed_data
 print(head(transformed_data))
@@ -260,7 +260,7 @@ print(elbow_plot)
 
 # Determining the number of clusters using Gap statistics
 fviz_nbclust(transformed_data, kmeans, method = 'gap_stat')
-#Clustering k is 3
+#Clustering k is 6
 
 # Determine the number of clusters using the Silhouette method
 fviz_nbclust(transformed_data, kmeans, method = 'silhouette')
@@ -268,13 +268,13 @@ fviz_nbclust(transformed_data, kmeans, method = 'silhouette')
 
 #NbCluster method -2
 #Elbow method -2 (K value taken based on elbow in plot)
-#Gap statistics -3
+#Gap statistics -6
 #Silhouette method -2 
 
 #Part G
 
 #Assigning the K value based on the result above I got previously for transformed_data
-#Assigning 3 since NbCluster and Elbow returned 3
+#Assigning 2 since NbCluster,Elbow returned and silhouette 2
 optimal_k<-2
 
 # Perform k-means clustering with the optimal value of k
@@ -329,7 +329,7 @@ ggplot(clustered_data_pca, aes(x = transformed_data_df[,1], y = transformed_data
 #transformed data
 
 # Computing silhouette width for each observation
-sil_width_pca <- silhouette(kmeans_result_pca$cluster, dist())
+sil_width_pca <- silhouette(kmeans_result_pca$cluster, dist(transformed_data))
 fviz_silhouette(sil_width_pca)
 
 # Add average silhouette width to plot
